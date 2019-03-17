@@ -60,7 +60,7 @@ export default class ConfigManager {
         } else {
             try {
                 $config = await readText({
-                    url: `${remoteURL}?nocache=${Date.now()}`,
+                    url: remoteURL,
                     timeout: REMOTE_TIMEOUT_MS
                 });
             } catch (err) {

@@ -150,7 +150,7 @@ function createManager(element: HTMLLinkElement | HTMLStyleElement) {
     let loadingStyleId = ++loadingStylesCounter;
 
     function loadingStart() {
-        if (!isPageLoaded() || !didDocumentShowUp) {
+        if (!isPageLoaded()) {
             loadingStyles.add(loadingStyleId);
 
             const fallbackStyle = document.querySelector('.darkreader--fallback');
@@ -233,7 +233,6 @@ function watchForDocumentVisibility(callback: () => void) {
         if (!document.hidden) {
             stopWatchingForDocumentVisibility();
             callback();
-            didDocumentShowUp = true;
         }
     };
     if (!alreadyWatching) {
@@ -255,7 +254,12 @@ function createThemeAndWatchForUpdates() {
     }
 
     if (document.hidden) {
-        watchForDocumentVisibility(runDynamicStyle);
+        watchForDocumentVisibility(
+            didDocumentShowUp ?
+                runDynamicStyle :
+                () => setTimeout(runDynamicStyle, 100)
+        );
+        didDocumentShowUp = true;
     } else {
         runDynamicStyle();
     }

@@ -18,7 +18,7 @@ import {createSVGFilterStylesheet, getSVGFilterMatrixValue, getSVGReverseFilterM
 import {ExtensionData, FilterConfig, News, Shortcuts, UserSettings, TabInfo} from '../definitions';
 
 const AUTO_TIME_CHECK_INTERVAL = getDuration({seconds: 10});
-const CONFIG_SYNC_INTERVAL = getDuration({days: 1});
+const CONFIG_SYNC_INTERVAL = getDuration({minutes: 15});
 
 export class Extension {
     ready: boolean;
@@ -75,6 +75,7 @@ export class Extension {
         this.awaiting = null;
 
         this.startAutoTimeCheck();
+        this.startConfigSync();
         this.news.subscribe();
         this.user.cleanup();
     }
@@ -180,6 +181,13 @@ export class Extension {
                 });
             });
         }
+    }
+
+    private startConfigSync() {
+        this.config.load({local: false});
+        setInterval(() => {
+            this.config.load({local: false});
+        }, CONFIG_SYNC_INTERVAL);
     }
 
     private wasEnabledOnLastCheck: boolean;
